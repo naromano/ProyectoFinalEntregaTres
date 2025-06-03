@@ -8,16 +8,13 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PersonaDAOImpl implements PersonaDAO {
+public class PersonaDAOImpl implements GenericDAO<Persona> {
 
-    private final DomicilioDAO domicilioDAO = new DomicilioDAOImpl();
+
 
     @Override
     public void guardar(Persona persona) throws SQLException {
-        Domicilio dom = persona.getDomicilio();
-        if (dom != null && dom.getId() == null) {
-            domicilioDAO.guardar(dom);
-        }
+
 
         String sql = "INSERT INTO persona (nombre, apellido, dni, domicilio_id) VALUES (?, ?, ?, ?)";
         try (Connection conn = DataBaseConnection.getConnection();
@@ -26,11 +23,7 @@ public class PersonaDAOImpl implements PersonaDAO {
             ps.setString(1, persona.getNombre());
             ps.setString(2, persona.getApellido());
             ps.setString(3, persona.getDni());
-            if (dom != null) {
-                ps.setLong(4, dom.getId());
-            } else {
-                ps.setNull(4, Types.BIGINT);
-            }
+            ps.setLong(4, persona.getDomicilio().getId());
 
             ps.executeUpdate();
 
@@ -44,9 +37,7 @@ public class PersonaDAOImpl implements PersonaDAO {
     @Override
     public void actualizar(Persona persona) throws SQLException {
         Domicilio dom = persona.getDomicilio();
-        if (dom != null && dom.getId() != null) {
-            domicilioDAO.actualizar(dom);
-        }
+
 
         String sql = "UPDATE persona SET nombre=?, apellido=?, dni=?, domicilio_id=? WHERE id=?";
         try (Connection conn = DataBaseConnection.getConnection();
@@ -54,11 +45,9 @@ public class PersonaDAOImpl implements PersonaDAO {
             ps.setString(1, persona.getNombre());
             ps.setString(2, persona.getApellido());
             ps.setString(3, persona.getDni());
-            if (dom != null) {
+
                 ps.setLong(4, dom.getId());
-            } else {
-                ps.setNull(4, Types.BIGINT);
-            }
+
             ps.setLong(5, persona.getId());
             ps.executeUpdate();
         }

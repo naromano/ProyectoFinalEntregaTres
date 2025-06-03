@@ -2,12 +2,13 @@ package org.dao;
 
 import config.DataBaseConnection;
 import org.entities.Domicilio;
+import org.entities.Persona;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DomicilioDAOImpl implements DomicilioDAO {
+public class DomicilioDAOImpl implements GenericDAO<Domicilio> {
 
     @Override
     public void guardar(Domicilio domicilio) throws SQLException {
